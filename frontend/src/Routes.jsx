@@ -10,7 +10,7 @@ export default function RoutesApp() {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Layout />}>
-                    <Route path="/panel">
+                    <Route path="/">
                         <Route index element={<Dashboard/>} />
                     </Route>
                     <Route path="/panel/profil">
