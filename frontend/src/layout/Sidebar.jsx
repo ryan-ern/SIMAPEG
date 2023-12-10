@@ -3,6 +3,7 @@ import "@trendmicro/react-sidenav/dist/react-sidenav.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import SideNav, { NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
 import { useLocation, useNavigate } from "react-router-dom";
+import '../assets/styles.css'
 
 export default function Sidebar({ setOutletMargin }) {
     const [isVisible, setIsVisible] = useState(false);
