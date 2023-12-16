@@ -5,12 +5,12 @@ import SideNav, { NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
 import { useLocation, useNavigate } from "react-router-dom";
 import '../assets/styles.css'
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../store/actions";
+import { logout } from "../store/action";
 import { Button } from "react-bootstrap";
 
 export default function Sidebar({ setOutletMargin }) {
     const dispatch = useDispatch()
-    const data = useSelector((state) => state.auth.response)
+    const data = useSelector((state) => state.store.response)
     const [isVisible, setIsVisible] = useState(false);
     const [fadeClass, setFadeClass] = useState("");
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function Sidebar({ setOutletMargin }) {
         setIsVisible(expanded);
         const isAndroid = window.innerWidth <= 768;
         if (!isAndroid) {
-            setOutletMargin(expanded ? '5%' : '-20%')
+            setOutletMargin(expanded ? '5%' : '-12%')
         }
     };
 
@@ -119,7 +119,7 @@ export default function Sidebar({ setOutletMargin }) {
                         </Button>
                     </div>
                 ) : (
-                    <NavItem eventKey="" className='show' style={{ background: '#dc3545', position: 'absolute', bottom: '8%', width: '100%' }} onClick={(e) => { e.preventDefault(); dispatch(logout(navigate)); }}>
+                    <NavItem eventKey={currentRoute} className='show' style={{ background: '#dc3545', position: 'absolute', bottom: '8%', width: '100%' }} onClick={(e) => { e.preventDefault(); dispatch(logout(navigate)); }}>
                         <NavIcon>
                             <FontAwesomeIcon icon="fa-solid fa-right-from-bracket" />
                         </NavIcon>

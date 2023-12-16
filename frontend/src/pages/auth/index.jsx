@@ -4,14 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../../assets/styles.css"
-import { authInfo, login } from "../../store/actions";
+import { authInfo, login } from "../../store/action";
 
 export default function Login() {
-    const auth = useSelector((state) => state.auth)
+    const auth = useSelector((state) => state.store)
     const dispatch = useDispatch()
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
-
     const handleTogglePassword = () => {
         setShowPassword(!showPassword);
     };
@@ -53,7 +52,7 @@ export default function Login() {
                                     </div>
                                     <div>
                                         {auth?.message ?
-                                            <Alert variant="danger" className="text-center">{auth?.message?.data?.description || auth?.message?.message}</Alert>
+                                            <Alert variant="danger" className="text-center">{auth?.message?.data?.description || auth?.message?.response?.data?.description || auth?.message?.message}</Alert>
                                             : null}
                                         <Form action="#" onSubmit={(e) => {
                                             e.preventDefault();

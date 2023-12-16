@@ -5,3 +5,5 @@ def includeme(config):
     config.add_route('login', '/login')
     config.add_route('logout', '/logout')
     config.add_route('auth-info', '/auth-info')
+    config.add_route('edit-profile', '/edit-profile')
+    config.add_route('get-avatar', '/avatars/{username}/{path}')

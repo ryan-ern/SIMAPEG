@@ -12,7 +12,7 @@ export function Redirect({ to }) {
 
 export function Authenticated({ children }) {
     const navigate = useNavigate();
-    const auth = useSelector((state) => state.auth);
+    const auth = useSelector((state) => state.store);
     useEffect(() => {
         if (!auth?.isLogin) {
             navigate("/login")

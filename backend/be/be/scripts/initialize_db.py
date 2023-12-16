@@ -14,6 +14,49 @@ def setup_models(dbsession):
     """
     model = models.mymodel.MyModel(name='one', value=1)
     dbsession.add(model)
+    # Add Position
+    position_data = {
+        'name': 'Manager',
+        'salary_in_months': 5000.0,
+    }
+    position = models.mymodel.Position(**position_data)
+    dbsession.add(position)
+
+    # Add User
+    user_data_list = [
+        {
+            'username': 'admin',
+            'name': 'admin',
+            'avatar': 'default.png',
+            'jatah_cuti': 10000000,
+            'nik': 1234567890,
+            'nohp': '123-456-7890',
+            'jk_pegawai': 'Laki laki',
+            'tgl_lahir': '1990-01-01',
+            'status': 'Lajang',
+            'password': 'admin',
+            'role': 'admin',
+            'jabatan_id': 1,
+        },
+        {
+            'username': 'user',
+            'name': 'user',
+            'avatar': 'default.png',
+            'jatah_cuti': 10000000,
+            'nik': 12312421,
+            'nohp': '123-456-7890',
+            'jk_pegawai': 'Laki laki',
+            'tgl_lahir': '1990-01-01',
+            'status': 'Lajang',
+            'password': 'user',
+            'role': 'user',
+            'jabatan_id': 1,
+        }
+    ]
+
+    for user_data in user_data_list:
+        user = models.mymodel.User(**user_data)
+        dbsession.add(user)
 
 
 def parse_args(argv):

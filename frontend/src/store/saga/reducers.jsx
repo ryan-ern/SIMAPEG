@@ -1,4 +1,4 @@
-import { AUTH_INFO, AUTH_INFO_FAILED, AUTH_INFO_SUCCESS, LOGOUT, LOGOUT_SUCCESS, POST_LOGIN, POST_LOGIN_FAILED, POST_LOGIN_SUCCESS } from "./actionType"
+import { AUTH_INFO, AUTH_INFO_FAILED, AUTH_INFO_SUCCESS, LOGOUT, LOGOUT_SUCCESS, POST_EDIT_PROFILE, POST_EDIT_PROFILE_FAILED, POST_EDIT_PROFILE_SUCCESS, POST_LOGIN, POST_LOGIN_FAILED, POST_LOGIN_SUCCESS } from "./actionTypes"
 
 const init_state = {
     response: {},
@@ -7,7 +7,7 @@ const init_state = {
     message: null
 }
 
-const authReducer = (state = init_state, action) => {
+const Reducers = (state = init_state, action) => {
     switch (action.type) {
         case POST_LOGIN:
             state = {
@@ -24,6 +24,23 @@ const authReducer = (state = init_state, action) => {
             state = {
                 ...state,
                 isLogin: false,
+                message: action.payload
+            }
+            break
+        case POST_EDIT_PROFILE:
+            state = {
+                ...state
+            }
+            break
+        case POST_EDIT_PROFILE_SUCCESS:
+            state = {
+                ...state,
+                response: action.payload.data,
+            }
+            break
+        case POST_EDIT_PROFILE_FAILED:
+            state = {
+                ...state,
                 message: action.payload
             }
             break
@@ -63,4 +80,4 @@ const authReducer = (state = init_state, action) => {
     return state;
 }
 
-export default authReducer
+export default Reducers

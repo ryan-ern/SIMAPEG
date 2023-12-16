@@ -1,11 +1,15 @@
 from sqlalchemy import (
     Column,
-    Index,
     Integer,
+    BigInteger,
+    Date,
+    DateTime,
     String,
     ForeignKey,
     Enum,
     Text,
+    Float,
+    Index
 )
 from sqlalchemy.orm import relationship
 
@@ -15,9 +19,18 @@ from .meta import Base
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
-    username = Column(String(length=255), unique=True, nullable=False)
-    password = Column(String(length=255), nullable=False)
-    role = Column(Enum('admin', 'user', nullable=False))
+    username = Column(String(255), unique=True, nullable=False)
+    name = Column(String(255), nullable=False)
+    avatar = Column(String(255), nullable=False)
+    jatah_cuti = Column(Integer, nullable=False)
+    nik = Column(BigInteger, nullable=False)
+    nohp = Column(String(255), nullable=False)
+    jk_pegawai = Column(String(255), nullable=False)
+    tgl_lahir = Column(Date, nullable=False)
+    status = Column(String(255), nullable=False)
+    password = Column(String(255), nullable=False)
+    role = Column(Enum('admin', 'user'), nullable=False)
+    jabatan_id = Column(Integer, ForeignKey('position.id'), nullable=False)
     tokens = relationship('Token', back_populates='user')
 
 
@@ -27,6 +40,51 @@ class Token(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     jwt_token = Column(Text, nullable=False)
     user = relationship('User', back_populates='tokens')
+
+
+class Presence(Base):
+    __tablename__ = 'presence'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    presence_in = Column(DateTime, nullable=False)
+    presence_out = Column(DateTime, nullable=False)
+    status = Column(Enum('diproses', 'ditolak',
+                    'diterima', 'telat'), nullable=False)
+
+
+class Salary(Base):
+    __tablename__ = 'salary'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    total_presence = Column(Integer, nullable=False)
+    total_work_id = Column(Integer, ForeignKey('work.id'), nullable=False)
+    total_salary = Column(Float, nullable=False)
+    month = Column(Integer, nullable=False)
+    year = Column(Integer, nullable=False)
+    status = Column(Enum('diambil', 'belum diambil'), nullable=False)
+
+
+class Leave(Base):
+    __tablename__ = 'leave'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    awal = Column(DateTime, nullable=False)
+    akhir = Column(DateTime, nullable=False)
+    status = Column(Enum('diproses', 'ditolak', 'diterima'), nullable=False)
+    desc = Column(Text)
+
+
+class Position(Base):
+    __tablename__ = 'position'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    salary_in_months = Column(Float, nullable=False)
+
+
+class Work(Base):
+    __tablename__ = 'work'
+    id = Column(Integer, primary_key=True)
+    total_days = Column(Integer, nullable=False)
 
 
 class MyModel(Base):
