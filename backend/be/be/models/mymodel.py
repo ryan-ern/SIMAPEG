@@ -2,8 +2,9 @@ from sqlalchemy import (
     Column,
     Index,
     Integer,
-    String,  # Mengganti Text dengan String untuk kolom username dan password
+    String,
     ForeignKey,
+    Enum,
     Text,
 )
 from sqlalchemy.orm import relationship
@@ -16,6 +17,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(length=255), unique=True, nullable=False)
     password = Column(String(length=255), nullable=False)
+    role = Column(Enum('admin', 'user', nullable=False))
     tokens = relationship('Token', back_populates='user')
 
 

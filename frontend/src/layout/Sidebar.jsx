@@ -4,9 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import SideNav, { NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
 import { useLocation, useNavigate } from "react-router-dom";
 import '../assets/styles.css'
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/actions";
+import { Button } from "react-bootstrap";
 
 export default function Sidebar({ setOutletMargin }) {
+    const dispatch = useDispatch()
+    const data = useSelector((state) => state.auth.response)
     const [isVisible, setIsVisible] = useState(false);
+    const [fadeClass, setFadeClass] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -15,10 +21,14 @@ export default function Sidebar({ setOutletMargin }) {
     const handleToggle = expanded => {
         setIsVisible(expanded);
         const isAndroid = window.innerWidth <= 768;
-        if (!isAndroid){
+        if (!isAndroid) {
             setOutletMargin(expanded ? '5%' : '-20%')
         }
     };
+
+    useEffect(() => {
+        setFadeClass(isVisible ? "show" : "fade");
+    }, [isVisible]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -48,9 +58,7 @@ export default function Sidebar({ setOutletMargin }) {
             style={{ position: "fixed", height: "100%" }}
             onSelect={(selected) => {
                 const to = "/" + selected;
-                if (window.location.pathname !== to) {
-                    navigate(to);
-                }
+                navigate(to);
             }}
         >
             <SideNav.Toggle />
@@ -61,31 +69,63 @@ export default function Sidebar({ setOutletMargin }) {
                     </NavIcon>
                     <NavText>Home</NavText>
                 </NavItem>
-                <NavItem eventKey="panel/profil">
-                    <NavIcon>
-                        <FontAwesomeIcon icon="fa-solid fa-user-pen" />
-                    </NavIcon>
-                    <NavText>Edit Profil</NavText>
-                </NavItem>
-                <NavItem eventKey="presence">
+                {data.role === 'admin' ?
+                    <NavItem eventKey="panel/jabatan">
+                        <NavIcon>
+                            <FontAwesomeIcon icon="fa-solid fa-chart-simple" />
+                        </NavIcon>
+                        <NavText>Jabatan</NavText>
+                    </NavItem>
+                    : null}
+                {data.role === 'admin' ?
+                    <NavItem eventKey="panel/karyawan">
+                        <NavIcon>
+                            <FontAwesomeIcon icon="fa-solid fa-users" />
+                        </NavIcon>
+                        <NavText>Karyawan</NavText>
+                    </NavItem>
+                    : null}
+                {data.role === 'admin' ? null :
+                    <NavItem eventKey="panel/profil">
+                        <NavIcon>
+                            <FontAwesomeIcon icon="fa-solid fa-user-pen" />
+                        </NavIcon>
+                        <NavText>Edit Profil</NavText>
+                    </NavItem>
+                }
+                <NavItem eventKey="panel/presence">
                     <NavIcon>
                         <FontAwesomeIcon icon="fa-solid fa-file-circle-check" />
                     </NavIcon>
                     <NavText>Absensi</NavText>
                 </NavItem>
-                <NavItem eventKey="salary">
+                <NavItem eventKey="panel/salary">
                     <NavIcon>
                         <FontAwesomeIcon icon="fa-solid fa-money-bill-wave" />
                     </NavIcon>
                     <NavText>Gaji</NavText>
                 </NavItem>
-                <NavItem eventKey="leave">
+                <NavItem eventKey="panel/leave">
                     <NavIcon>
                         <FontAwesomeIcon icon="fa-solid fa-file-circle-exclamation" />
                     </NavIcon>
                     <NavText>Cuti</NavText>
                 </NavItem>
+                {isVisible ? (
+                    <div className={`text-center fade ${fadeClass}`} style={{ position: 'absolute', bottom: '8%', width: '100%' }}>
+                        <Button variant="danger" className="px-5 py-2" onClick={(e) => { e.preventDefault(); dispatch(logout(navigate)); }}>
+                            <FontAwesomeIcon icon="fa-solid fa-right-from-bracket" />
+                            <span className="mx-2">Logout</span>
+                        </Button>
+                    </div>
+                ) : (
+                    <NavItem eventKey="" className='show' style={{ background: '#dc3545', position: 'absolute', bottom: '8%', width: '100%' }} onClick={(e) => { e.preventDefault(); dispatch(logout(navigate)); }}>
+                        <NavIcon>
+                            <FontAwesomeIcon icon="fa-solid fa-right-from-bracket" />
+                        </NavIcon>
+                    </NavItem>
+                )}
             </SideNav.Nav>
-        </SideNav>
+        </SideNav >
     );
 }

@@ -34,7 +34,7 @@ export const authInfoFailed = (message) => ({
 
 export const logout = (navigate) => ({
     type: LOGOUT,
-    payload: { navigate },
+    payload: navigate,
 });
 
 export const logoutSuccess = () => ({

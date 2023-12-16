@@ -20,7 +20,7 @@ export default function Layout() {
             </Row>
             <Row>
                 <Col xs={2}>
-                    <Sidebar setOutletMargin={setOutletMargin}/>
+                    <Sidebar setOutletMargin={setOutletMargin} />
                 </Col>
                 <Col xs={10}>
                     <div

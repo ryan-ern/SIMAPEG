@@ -1,4 +1,4 @@
-import { Button, Card, Col, Form, Row, Container } from "react-bootstrap";
+import { Button, Card, Col, Form, Row, Container, Alert } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,11 +23,14 @@ export default function Login() {
 
     useEffect(() => {
         dispatch(authInfo())
-        if (auth.isLogin) {
+    }, [dispatch])
+
+    useEffect(() => {
+        if (auth?.response?.isLogin) {
             navigate("/panel");
         }
 
-    }, [dispatch, navigate])
+    }, [navigate, auth?.response]);
 
     return (
         <div style={{ background: '#38a8af', minHeight: '100vh', overflowY: 'hidden' }}>
@@ -48,8 +51,10 @@ export default function Login() {
                                             <FontAwesomeIcon icon="fa-solid fa-building" bounce size="2xl" style={{ color: "#ffd233", }} />
                                         </h1>
                                     </div>
-
                                     <div>
+                                        {auth?.message ?
+                                            <Alert variant="danger" className="text-center">{auth?.message?.data?.description || auth?.message?.message}</Alert>
+                                            : null}
                                         <Form action="#" onSubmit={(e) => {
                                             e.preventDefault();
                                             dispatch(login(account, navigate));
@@ -108,6 +113,5 @@ export default function Login() {
                 </Container>
             </div>
         </div>
-
     );
 }

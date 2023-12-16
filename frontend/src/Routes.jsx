@@ -6,7 +6,6 @@ import Profil from "./pages/profil";
 import Login from "./pages/auth";
 import { Authenticated } from "./middleware/auth.middleware";
 
-
 export default function RoutesApp() {
     return (
         <BrowserRouter>
@@ -20,10 +19,17 @@ export default function RoutesApp() {
                     </Authenticated>
                 }>
                     <Route index element={<Dashboard />} />
-                    <Route path="/panel/profil">
-                        <Route index element={<Profil />} />
-                    </Route>
+                    <Route path="jabatan" element={<Profil />} />
+                    <Route path="karyawan" element={<Profil />} />
+                    <Route path="profil" element={<Profil />} />
+                    <Route path="presence" element={<Profil />} />
+                    <Route path="salary" element={<Profil />} />
+                    <Route path="leave" element={<Profil />} />
+
                 </Route>
+                {/* Not Found */}
+                {/* <Route path="/404" element={<Login />} />
+                <Route path="*" element={<Login />} /> */}
             </Routes>
         </BrowserRouter>
     );

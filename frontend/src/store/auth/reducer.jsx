@@ -2,7 +2,7 @@ import { AUTH_INFO, AUTH_INFO_FAILED, AUTH_INFO_SUCCESS, LOGOUT, LOGOUT_SUCCESS,
 
 const init_state = {
     response: {},
-    isLogin: true,
+    isLogin: false,
     check: false,
     message: null
 }
@@ -51,7 +51,8 @@ const authReducer = (state = init_state, action) => {
         case LOGOUT:
             break
         case LOGOUT_SUCCESS:
-            return {
+            state = { ...init_state };
+            state = {
                 ...state,
                 isLogin: false,
             }
