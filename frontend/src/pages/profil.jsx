@@ -1,27 +1,32 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, Row, Toast, ToastContainer } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { editProfil } from "../store/saga/actions";
+import { deleteMessage, editProfil } from "../store/saga/actions";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default function Profil() {
     const data = useSelector((state) => state.store.response)
-    console.log(data)
+    const edit = useSelector((state) => state.store.edit)
     const dispatch = useDispatch()
     const [button, setButton] = useState(true)
-    const [show, setShow] = useState(true)
-    const avatarUrl = data.avatar
-    const filename = avatarUrl?.split('/').pop();
+    const [show, setShow] = useState(false)
     const [isAndroid, setIsAndroid] = useState(window.innerWidth <= 991);
 
     useEffect(() => {
         const handleResize = () => {
             setIsAndroid(window.innerWidth <= 991);
         };
+        if (edit && edit.message) {
+            setShow(true);
+            setTimeout(() => {
+                dispatch(deleteMessage());
+            }, 3000);
+        }
         window.addEventListener('resize', handleResize);
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, []);
+    }, [edit]);
 
     const [profil, setProfil] = useState({
         name: data.name || '',
@@ -30,7 +35,6 @@ export default function Profil() {
         nik: data.nik || '',
         status: data.status || '',
         tgl_lahir: data.tgl_lahir || '',
-        avatar: filename || null,
         jk_pegawai: data.jk_pegawai || '',
         jabatan: data.jabatan || '',
         jatah_cuti: data.jatah_cuti || '',
@@ -48,26 +52,29 @@ export default function Profil() {
             formData.append(key, profil[key]);
         }
         dispatch(editProfil(formData));
-        console.log(profil);
     };
 
     return (
         <Row>
             <Row>
-                <ToastContainer position="top-end" style={{ zIndex: 5, position: 'absolute' }}>
-                    <Toast onClose={() => setShow(false)} show={show} delay={3000} style={{ width: '80%', marginTop: '30%', marginLeft: '20%' }}>
-                        <Toast.Header>
-                            <img
-                                src="holder.js/20x20?text=%20"
-                                className="rounded me-2"
-                                alt=""
-                            />
-                            <strong className="me-auto">Sukses!</strong>
-                            <small>11 mins ago</small>
-                        </Toast.Header>
-                        <Toast.Body>Woohooreading this text in a Toast!</Toast.Body>
-                    </Toast>
-                </ToastContainer>
+                {show && (
+                    <ToastContainer position="top-end" style={{ zIndex: 5, position: 'absolute' }}>
+                        <Toast onClose={() => setShow(false)} show={show} delay={3000} style={{ width: '100%', marginTop: '45%', marginLeft: '2%' }} autohide>
+                            <Toast.Header style={{ background: '#22bb55' }}>
+                                <img
+                                    src="holder.js/20x20?text=%20"
+                                    className="rounded me-2"
+                                    alt=""
+                                />
+                                <strong className="me-auto p-2 text-white">
+                                    <FontAwesomeIcon icon="fa-solid fa-check" className="mx-2" />
+                                    {edit?.message}
+                                </strong>
+                            </Toast.Header>
+                        </Toast>
+                    </ToastContainer>
+                )
+                }
                 <Col style={{
                     zIndex: 1, backgroundColor: "#093545",
                     width: '100%',
@@ -100,6 +107,7 @@ export default function Profil() {
                                                 defaultValue={data.name}
                                                 onChange={(e) => setProfil({ ...profil, name: e.target.value })}
                                                 disabled={button}
+                                                required
                                             />
                                         </Form.Group>
                                         <Form.Group>
@@ -111,6 +119,7 @@ export default function Profil() {
                                                 className="mb-3"
                                                 defaultValue={data.password}
                                                 onChange={(e) => setProfil({ ...profil, password: e.target.value })}
+                                                required
                                                 disabled={button}
                                             />
                                         </Form.Group>
@@ -123,6 +132,7 @@ export default function Profil() {
                                                 className="mb-3"
                                                 defaultValue={data.nohp}
                                                 onChange={(e) => setProfil({ ...profil, nohp: e.target.value })}
+                                                required
                                                 disabled={button}
                                             />
                                         </Form.Group>
@@ -149,6 +159,7 @@ export default function Profil() {
                                                 className="mb-3"
                                                 defaultValue={data.nik}
                                                 onChange={(e) => setProfil({ ...profil, nik: e.target.value })}
+                                                required
                                                 disabled={button}
                                             />
                                         </Form.Group>
@@ -161,6 +172,7 @@ export default function Profil() {
                                                 className="mb-3"
                                                 defaultValue={data.status}
                                                 onChange={(e) => setProfil({ ...profil, status: e.target.value })}
+                                                required
                                                 disabled={button}
                                             />
                                         </Form.Group>
@@ -173,6 +185,7 @@ export default function Profil() {
                                                 className="mb-5"
                                                 defaultValue={data.tgl_lahir}
                                                 onChange={(e) => setProfil({ ...profil, tgl_lahir: e.target.value })}
+                                                required
                                                 disabled={button}
                                             />
                                         </Form.Group>
@@ -227,6 +240,6 @@ export default function Profil() {
                     </Card>
                 </Col>
             </Row>
-        </Row>
+        </Row >
     )
 }

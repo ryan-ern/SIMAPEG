@@ -1,4 +1,4 @@
-import { AUTH_INFO, AUTH_INFO_FAILED, AUTH_INFO_SUCCESS, LOGOUT, LOGOUT_SUCCESS, POST_EDIT_PROFILE, POST_EDIT_PROFILE_FAILED, POST_EDIT_PROFILE_SUCCESS, POST_LOGIN, POST_LOGIN_FAILED, POST_LOGIN_SUCCESS } from "./actionTypes";
+import { AUTH_INFO, AUTH_INFO_FAILED, AUTH_INFO_SUCCESS, DELETE_MESSAGE, LOGOUT, LOGOUT_SUCCESS, POST_EDIT_PROFILE, POST_EDIT_PROFILE_FAILED, POST_EDIT_PROFILE_SUCCESS, POST_LOGIN, POST_LOGIN_FAILED, POST_LOGIN_SUCCESS } from "./actionTypes";
 
 export const login = (account, navigate) => ({
     type: POST_LOGIN,
@@ -18,6 +18,10 @@ export const loginFailed = (message) => ({
 export const editProfil = (body) => ({
     type: POST_EDIT_PROFILE,
     payload: body
+})
+export const deleteMessage = () => ({
+    type: DELETE_MESSAGE,
+    payload: null
 })
 export const editProfilSuccess = (response) => ({
     type: POST_EDIT_PROFILE_SUCCESS,

@@ -149,7 +149,6 @@ def get_auth_info(request):
             'get-avatar', username=user.username, path=avatar_path)
         avatar_link = avatar_link.replace("%5C", "/")
         return {
-            'message': 'profil berhasil di perbaharui',
             'username': user.username,
             'name': user.name,
             'role': user.role,
@@ -184,31 +183,29 @@ def edit_profile(request):
             if os.path.exists(current_avatar_path) and user.avatar != 'default.png':
                 os.remove(current_avatar_path)
 
-            avatar = request.POST['avatar']
-            user.name = request.POST['name']
-            user.nohp = request.POST['nohp']
-            user.status = request.POST['status']
+            keys_to_update = ['avatar', 'name', 'nohp', 'status', 'nik', 'jk_pegawai',
+                              'tgl_lahir', 'password', 'jabatan', 'jatah_cuti']
+            for key in keys_to_update:
+                if key in request.POST:
+                    setattr(user, key, request.POST[key])
 
-            _, picture_extension = os.path.splitext(avatar.filename)
+            avatar = request.POST.get('avatar')  # Get avatar from POST data
+            if avatar is not None and getattr(avatar, 'filename', None):
+                _, picture_extension = os.path.splitext(avatar.filename)
 
-            timestamp = str(int(datetime.datetime.now().timestamp()))
-            new_avatar_filename = f'{user.name}_{timestamp}{picture_extension}'
-            picture_path = os.path.join('assets', new_avatar_filename)
-            try:
-                with open(picture_path, 'wb') as picture_file:
-                    chunk_size = 4096
-                    while chunk := avatar.file.read(chunk_size):
-                        picture_file.write(chunk)
-            except Exception as e:
-                print("Exception:", e)
+                timestamp = str(int(datetime.datetime.now().timestamp()))
+                new_avatar_filename = f'{user.name}_{timestamp}{picture_extension}'
+                picture_path = os.path.join('assets', new_avatar_filename)
 
-            user.avatar = new_avatar_filename
-            user.nik = request.POST['nik']
-            user.jk_pegawai = request.POST['jk_pegawai']
-            user.tgl_lahir = request.POST['tgl_lahir']
-            user.password = request.POST['password']
-            user.jabatan = request.POST['jabatan']
-            user.jatah_cuti = request.POST['jatah_cuti']
+                try:
+                    with open(picture_path, 'wb') as picture_file:
+                        chunk_size = 4096
+                        while chunk := avatar.file.read(chunk_size):
+                            picture_file.write(chunk)
+
+                    user.avatar = new_avatar_filename
+                except Exception as e:
+                    print("Exception:", e)
 
             request.dbsession.flush()
         except SQLAlchemyError:

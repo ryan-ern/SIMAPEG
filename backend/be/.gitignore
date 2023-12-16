@@ -7,7 +7,7 @@
 coverage.xml
 build/
 dist/
-
+assets/*
 .tox/
 nosetests.xml
 env*/

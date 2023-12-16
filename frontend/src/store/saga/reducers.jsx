@@ -1,10 +1,11 @@
-import { AUTH_INFO, AUTH_INFO_FAILED, AUTH_INFO_SUCCESS, LOGOUT, LOGOUT_SUCCESS, POST_EDIT_PROFILE, POST_EDIT_PROFILE_FAILED, POST_EDIT_PROFILE_SUCCESS, POST_LOGIN, POST_LOGIN_FAILED, POST_LOGIN_SUCCESS } from "./actionTypes"
+import { AUTH_INFO, AUTH_INFO_FAILED, AUTH_INFO_SUCCESS, DELETE_MESSAGE, LOGOUT, LOGOUT_SUCCESS, POST_EDIT_PROFILE, POST_EDIT_PROFILE_FAILED, POST_EDIT_PROFILE_SUCCESS, POST_LOGIN, POST_LOGIN_FAILED, POST_LOGIN_SUCCESS } from "./actionTypes"
 
 const init_state = {
     response: {},
     isLogin: false,
     check: false,
-    message: null
+    message: null,
+    edit: null
 }
 
 const Reducers = (state = init_state, action) => {
@@ -35,13 +36,19 @@ const Reducers = (state = init_state, action) => {
         case POST_EDIT_PROFILE_SUCCESS:
             state = {
                 ...state,
-                response: action.payload.data,
+                edit: action.payload.data,
             }
             break
         case POST_EDIT_PROFILE_FAILED:
             state = {
                 ...state,
                 message: action.payload
+            }
+            break
+        case DELETE_MESSAGE:
+            state = {
+                ...state,
+                edit: null
             }
             break
         case AUTH_INFO:
@@ -54,7 +61,7 @@ const Reducers = (state = init_state, action) => {
                 ...state,
                 check: true,
                 isLogin: true,
-                response: action.payload
+                response: action.payload,
             }
             break;
         case AUTH_INFO_FAILED:
