@@ -5,7 +5,7 @@ import { deleteMessage, editProfil } from "../store/saga/actions";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default function Profil() {
-    const data = useSelector((state) => state.store.response)
+    const data = useSelector((state) => state.store.info)
     const edit = useSelector((state) => state.store.edit)
     const dispatch = useDispatch()
     const [button, setButton] = useState(true)
@@ -92,9 +92,10 @@ export default function Profil() {
             </Row>
             <Row>
                 <Col lg={8} xs={12} style={{ zIndex: 4 }}>
-                    <Card>
+                    <Card className="shadow-lg">
                         <Card.Body>
                             <Form onSubmit={handleSubmit}>
+                                <h3 className="mb-4">Edit Profil</h3>
                                 <Row>
                                     <Col lg={6} xs={12}>
                                         <Form.Group>

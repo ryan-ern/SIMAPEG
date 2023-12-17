@@ -7,3 +7,8 @@ def includeme(config):
     config.add_route('auth-info', '/auth-info')
     config.add_route('edit-profile', '/edit-profile')
     config.add_route('get-avatar', '/avatars/{username}/{path}')
+    config.add_route('get-jabatan', '/jabatan', request_method='GET')
+    config.add_route('add-jabatan', '/jabatan', request_method='POST')
+    config.add_route('edit-jabatan', '/jabatan/{id}', request_method='PATCH')
+    config.add_route('delete-jabatan',
+                     '/jabatan/{id}', request_method='DELETE')

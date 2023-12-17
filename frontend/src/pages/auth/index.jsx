@@ -25,11 +25,11 @@ export default function Login() {
     }, [dispatch])
 
     useEffect(() => {
-        if (auth?.response?.isLogin) {
+        if (auth?.info?.isLogin) {
             navigate("/panel");
         }
 
-    }, [navigate, auth?.response]);
+    }, [navigate, auth?.info]);
 
     return (
         <div style={{ background: '#38a8af', minHeight: '100vh', overflowY: 'hidden' }}>

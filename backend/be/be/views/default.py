@@ -3,6 +3,7 @@ from pyramid.response import Response, FileResponse
 from pyramid.request import Request
 import os
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import exc
 import jwt
 import datetime
 
@@ -172,7 +173,7 @@ def get_auth_info(request):
         }
 
 
-@view_config(route_name='edit-profile', renderer='json', request_method='POST')
+@view_config(route_name='edit-profile', renderer='json', request_method='PATCH')
 def edit_profile(request):
     auth_user = auth_jwt_verify(request)
     if auth_user:
@@ -189,7 +190,7 @@ def edit_profile(request):
                 if key in request.POST:
                     setattr(user, key, request.POST[key])
 
-            avatar = request.POST.get('avatar')  # Get avatar from POST data
+            avatar = request.POST.get('avatar')
             if avatar is not None and getattr(avatar, 'filename', None):
                 _, picture_extension = os.path.splitext(avatar.filename)
 
@@ -247,6 +248,63 @@ def get_avatar(request):
             'description': 'User is not authenticated',
             'isLogin': False
         }
+
+
+@view_config(route_name='get-jabatan', renderer='json', request_method='GET')
+def get_jabatan(request):
+    try:
+        positions = request.dbsession.query(models.Position).all()
+        jabatan_list = [{'id': position.id, 'name': position.name,
+                         'salary_in_months': position.salary_in_months} for position in positions]
+        return {'jabatan_list': jabatan_list}
+    except SQLAlchemyError:
+        return Response('Database error', content_type='text/plain', status=500)
+
+
+@view_config(route_name='add-jabatan', renderer='json', request_method='POST')
+def add_jabatan(request):
+    try:
+        name = request.POST.get('name')
+        salary_in_months = request.POST.get('salary_in_months')
+        new_jabatan = models.Position(
+            name=name, salary_in_months=salary_in_months)
+        request.dbsession.add(new_jabatan)
+        request.dbsession.flush()
+        return {'message': 'Tambah Jabatan Sukses!'}
+    except SQLAlchemyError:
+        return Response('Database error', content_type='text/plain', status=500)
+
+
+@view_config(route_name='edit-jabatan', renderer='json', request_method='PATCH')
+def edit_jabatan(request):
+    jabatan_id = request.matchdict.get('id')
+    try:
+        jabatan = request.dbsession.query(
+            models.Position).filter_by(id=jabatan_id).one()
+        jabatan.name = request.POST.get('name', jabatan.name)
+        jabatan.salary_in_months = request.POST.get(
+            'salary_in_months', jabatan.salary_in_months)
+        request.dbsession.flush()
+        return {'message': 'Edit Jabatan Sukses!'}
+    except exc.NoResultFound:
+        return Response('Jabatan Tidak Ditemukan!', content_type='text/plain', status=404)
+    except SQLAlchemyError:
+        return Response('Database error', content_type='text/plain', status=500)
+
+
+@view_config(route_name='delete-jabatan', renderer='json', request_method='DELETE')
+def delete_jabatan(request):
+    jabatan_id = request.matchdict.get('id')
+    try:
+        jabatan = request.dbsession.query(
+            models.Position).filter_by(id=jabatan_id).one()
+        request.dbsession.delete(jabatan)
+        request.dbsession.flush()
+        return {'message': 'Hapus Jabatan Sukses!'}
+    except exc.NoResultFound:
+        return Response('Jabatan not found', content_type='text/plain', status=404)
+    except SQLAlchemyError as e:
+        return Response('gagal, posisi sedang digunakan user!', content_type='text/plain', status=400)
 
 
 db_err_msg = """\

@@ -10,7 +10,7 @@ import { Button } from "react-bootstrap";
 
 export default function Sidebar({ setOutletMargin }) {
     const dispatch = useDispatch()
-    const data = useSelector((state) => state.store.response)
+    const data = useSelector((state) => state.store.info)
     const [isVisible, setIsVisible] = useState(false);
     const [fadeClass, setFadeClass] = useState("");
     const navigate = useNavigate();

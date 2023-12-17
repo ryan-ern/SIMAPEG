@@ -26,7 +26,7 @@ export default function Layout() {
                     <div
                         className='mb-5 mt-5 align-items-center'
                         style={{
-                            minHeight: '80vh',
+                            minHeight: '85vh',
                             marginLeft: outletMargin,
                             transition: 'margin-left 0.3s ease',
                         }}
