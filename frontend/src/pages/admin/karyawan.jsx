@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { deleteJabatan, deleteMessage, getJabatan } from "../../store/saga/actions"
+import { deleteMessage, deleteUsers, getUsers } from "../../store/saga/actions"
 import { Card, CardBody, Col, Row, Toast, ToastContainer } from "react-bootstrap"
 import {
     useTable, useSortBy, useGlobalFilter, usePagination,
 } from 'react-table';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
-import EditJabatan from "./editJabatan";
+import EditKaryawan from "./editKaryawan";
 
-export default function Jabatan() {
+export default function Karyawan() {
     const [dataToEdit, setDataToEdit] = useState(null);
 
     const handleEditClick = (rowData) => {
@@ -19,11 +19,13 @@ export default function Jabatan() {
         setDataToEdit(null);
     };
     const dispatch = useDispatch()
-    const jabatan = useSelector((state) => state.store.jabatan)
+    const karyawan = useSelector((state) => state.store.user)
     const message = useSelector((state) => state.store)
+
     useEffect(() => {
-        dispatch(getJabatan()) 
+        dispatch(getUsers()) 
     }, [])
+    
     useEffect(() => {
         if (message && message.delete?.message || message.add?.message || message.edit?.message) {
             setShow(true);
@@ -39,13 +41,23 @@ export default function Jabatan() {
                 accessor: (_, index) => index + 1
             },
             {
-                Header: 'Posisi',
-                accessor: 'name',
+                Header: 'NIK',
+                accessor: 'nik',
                 Cell: ({value}) => (value)
             },
             {
-                Header: 'Gaji Dalam Sebulan',
-                accessor: 'salary_in_months',
+                Header: 'Nama',
+                accessor: 'name',
+                Cell: ({value}) => (value),
+            },
+            {
+                Header: 'Nama',
+                accessor: 'jabatan_name',
+                Cell: ({value}) => (value),
+            },
+            {
+                Header: 'NO HP',
+                accessor: 'nohp',
                 Cell: ({value}) => (value),
             },
             {
@@ -58,7 +70,7 @@ export default function Jabatan() {
                             <button className="btn btn-primary px-4 my-3" onClick={() => handleEditClick(row.original)}>Edit</button>
                         </div>
                         <div className='text-center'>
-                            <button className="btn btn-danger px-3" onClick={() => { dispatch(deleteJabatan(row.original.id));  setShow(true)}}>Hapus</button>
+                            <button className="btn btn-danger px-3" onClick={() => { dispatch(deleteUsers(row.original.id));  setShow(true)}}>Hapus</button>
                         </div>
                     </>
                 ),
@@ -68,8 +80,8 @@ export default function Jabatan() {
     )
 
     const data = useMemo(
-        () => (jabatan?.jabatan_list || []),
-        [jabatan],
+        () => (karyawan?.user_list || []),
+        [karyawan],
     );
 
     const {
@@ -100,7 +112,7 @@ export default function Jabatan() {
 
     return (
         <Row style={{ marginRight: '5%' }}>
-            {dataToEdit && <EditJabatan data={dataToEdit} onEditDone={handleEditDone}  />}
+            {dataToEdit && <EditKaryawan data={dataToEdit} onEditDone={handleEditDone}  />}
 
             {show && (
                 <ToastContainer position="top-end" style={{ zIndex: 5, position: 'absolute' }}>
@@ -132,7 +144,7 @@ export default function Jabatan() {
                                 </div>
                             </Col>
                             <Col className="d-flex justify-content-end">
-                                <button className="btn btn-primary" onClick={()=> navigate('/panel/add-jabatan')}>Tambah Data</button>
+                                <button className="btn btn-primary" onClick={()=> navigate('/panel/add-karyawan')}>Tambah Data</button>
                             </Col>
                         </Row>
                         <Row>
@@ -158,7 +170,7 @@ export default function Jabatan() {
                                             <tbody >
                                                 <tr>
                                                     <td colSpan={headerGroups[0].headers.length} className="text-center">
-                                                        {(jabatan) ? 'Memuat data...' : 'Tidak ada data.'}
+                                                        {(karyawan) ? 'Memuat data...' : 'Tidak ada data.'}
                                                     </td>
                                                 </tr>
                                             </tbody>

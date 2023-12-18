@@ -7,6 +7,8 @@ import Login from "./pages/auth";
 import { Authenticated } from "./middleware/auth.middleware";
 import Jabatan from "./pages/admin/jabatan";
 import JabatanAdd from "./pages/admin/addJabatan";
+import Karyawan from "./pages/admin/karyawan";
+import KaryawanAdd from "./pages/admin/addKaryawan";
 
 export default function RoutesApp() {
     return (
@@ -22,12 +24,13 @@ export default function RoutesApp() {
                 }>
                     <Route index element={<Dashboard />} />
                     <Route path="jabatan" element={<Jabatan />} />
-                    <Route path="karyawan" element={<Profil />} />
+                    <Route path="users" element={<Karyawan />} />
                     <Route path="profil" element={<Profil />} />
                     <Route path="presence" element={<Profil />} />
                     <Route path="salary" element={<Profil />} />
                     <Route path="leave" element={<Profil />} />
                     <Route path="add-jabatan" element={<JabatanAdd />} />
+                    <Route path="add-karyawan" element={<KaryawanAdd />} />
 
                 </Route>
             </Routes>

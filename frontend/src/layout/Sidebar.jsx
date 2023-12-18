@@ -78,7 +78,7 @@ export default function Sidebar({ setOutletMargin }) {
                     </NavItem>
                     : null}
                 {data.role === 'admin' ?
-                    <NavItem eventKey="panel/karyawan">
+                    <NavItem eventKey="panel/users">
                         <NavIcon>
                             <FontAwesomeIcon icon="fa-solid fa-users" />
                         </NavIcon>

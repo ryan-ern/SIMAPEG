@@ -2,12 +2,17 @@ from pyramid.view import view_config
 from pyramid.response import Response, FileResponse
 from pyramid.request import Request
 import os
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import exc
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from sqlalchemy.orm import exc, joinedload
 import jwt
 import datetime
 
 from .. import models
+
+
+"""\
+welcome
+"""
 
 
 @view_config(route_name='welcome', renderer='be:templates/mytemplate.jinja2')
@@ -21,12 +26,22 @@ def my_view(request):
     return {'one': one, 'project': 'SIMAPEG '}
 
 
+"""\
+index
+"""
+
+
 @view_config(route_name='index', renderer='json',  request_method="GET")
 def index(request):
     return {
         'message': 'Server SIMAPEG Running!',
         'versi': '0.0.1'
     }
+
+
+"""\
+JWT
+"""
 
 
 def auth_jwt_verify(request):
@@ -60,6 +75,11 @@ def create_tokens(user_id):
     jwt_token = jwt.encode(payload, 'secret', algorithm='HS256')
 
     return jwt_token
+
+
+"""\
+auth
+"""
 
 
 @view_config(route_name='login', renderer='json',  request_method="POST")
@@ -131,6 +151,11 @@ def logout(request):
         'message': 'error',
         'description': 'Token not found'
     }
+
+
+"""\
+user me
+"""
 
 
 @view_config(route_name='auth-info', renderer='json', request_method='GET')
@@ -250,6 +275,11 @@ def get_avatar(request):
         }
 
 
+"""\
+jabatan
+"""
+
+
 @view_config(route_name='get-jabatan', renderer='json', request_method='GET')
 def get_jabatan(request):
     try:
@@ -305,6 +335,137 @@ def delete_jabatan(request):
         return Response('Jabatan not found', content_type='text/plain', status=404)
     except SQLAlchemyError as e:
         return Response('gagal, posisi sedang digunakan user!', content_type='text/plain', status=400)
+
+
+"""\
+Users
+"""
+
+
+@view_config(route_name='get-users', renderer='json', request_method='GET')
+def get_users(request):
+    try:
+        users = (
+            request.dbsession.query(models.User)
+            .options(joinedload(models.User.jabatan))
+            .all()
+        )
+
+        user_list = []
+
+        for user in users:
+            user_data = {
+                'id': user.id,
+                'username': user.username,
+                'name': user.name,
+                'avatar': user.avatar,
+                'jatah_cuti': user.jatah_cuti,
+                'nik': user.nik,
+                'nohp': user.nohp,
+                'jk_pegawai': user.jk_pegawai,
+                'tgl_lahir': user.tgl_lahir.strftime('%Y-%m-%d'),
+                'status': user.status,
+                'role': user.role,
+                'jabatan_id': user.jabatan_id,
+                'jabatan_name': user.jabatan.name if user.jabatan else None
+            }
+            user_list.append(user_data)
+
+        return {'user_list': user_list}
+    except SQLAlchemyError:
+        return Response('Database error', content_type='text/plain', status=500)
+
+
+# @view_config(route_name='get-user', renderer='json', request_method='GET')
+# def get_user(request):
+#     user_id = request.matchdict.get('id')
+#     try:
+#         user = request.dbsession.query(models.User).filter_by(id=user_id).one()
+#         user_data = {
+#             'id': user.id,
+#             'username': user.username,
+#             'name': user.name,
+#             'avatar': user.avatar,
+#             'jatah_cuti': user.jatah_cuti,
+#             'nik': user.nik,
+#             'nohp': user.nohp,
+#             'jk_pegawai': user.jk_pegawai,
+#             'tgl_lahir': user.tgl_lahir.strftime('%Y-%m-%d'),
+#             'status': user.status,
+#             'role': user.role,
+#             'jabatan_id': user.jabatan_id
+#         }
+#         return {'user_data': user_data}
+#     except SQLAlchemyError:
+#         return Response('User not found', content_type='text/plain', status=404)
+
+
+@view_config(route_name='add-user', renderer='json', request_method='POST')
+def add_user(request):
+    try:
+        data = {
+            'username': request.POST.get('username'),
+            'name': request.POST.get('name'),
+            'avatar': request.POST.get('avatar'),
+            'jatah_cuti': request.POST.get('jatah_cuti'),
+            'nik': request.POST.get('nik'),
+            'nohp': request.POST.get('nohp'),
+            'jk_pegawai': request.POST.get('jk_pegawai'),
+            'tgl_lahir': request.POST.get('tgl_lahir'),
+            'status': request.POST.get('status'),
+            'role': request.POST.get('role'),
+            'jabatan_id': request.POST.get('jabatan_id'),
+            'password': request.POST.get('password')
+        }
+
+        new_user = models.User(**data)
+
+        request.dbsession.add(new_user)
+        request.dbsession.flush()
+
+        return {'message': 'User added successfully'}
+    except IntegrityError:
+        return Response('Username Sudah Terdaftar!', content_type='text/plain', status=400)
+    except SQLAlchemyError:
+        return Response('Database error', content_type='text/plain', status=500)
+
+
+@view_config(route_name='edit-user', renderer='json', request_method='PATCH')
+def edit_user(request):
+    user_id = request.matchdict.get('id')
+    try:
+        user = request.dbsession.query(models.User).filter_by(id=user_id).one()
+
+        user.username = request.POST.get('username', user.username)
+        user.name = request.POST.get('name', user.name)
+        user.avatar = request.POST.get('avatar', user.avatar)
+        user.jatah_cuti = request.POST.get('jatah_cuti', user.jatah_cuti)
+        user.nik = request.POST.get('nik', user.nik)
+        user.nohp = request.POST.get('nohp', user.nohp)
+        user.jk_pegawai = request.POST.get('jk_pegawai', user.jk_pegawai)
+        user.tgl_lahir = request.POST.get('tgl_lahir', user.tgl_lahir)
+        user.status = request.POST.get('status', user.status)
+        user.role = request.POST.get('role', user.role)
+        user.jabatan_id = request.POST.get('jabatan_id', user.jabatan_id)
+
+        request.dbsession.flush()
+
+        return {'message': 'User updated successfully'}
+    except SQLAlchemyError:
+        return Response('User not found', content_type='text/plain', status=404)
+
+
+@view_config(route_name='delete-user', renderer='json', request_method='DELETE')
+def delete_user(request):
+    user_id = request.matchdict.get('id')
+    try:
+        user = request.dbsession.query(
+            models.User).filter_by(id=user_id).one()
+        request.dbsession.delete(user)
+        request.dbsession.flush()
+        return {'message': 'Hapus Pengguna Sukses!'}
+    except exc.NoResultFound:
+        return Response('Pengguna Tidak Ditemukan!', content_type='text/plain', status=404)
 
 
 db_err_msg = """\

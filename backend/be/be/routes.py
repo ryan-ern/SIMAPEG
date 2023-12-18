@@ -12,3 +12,8 @@ def includeme(config):
     config.add_route('edit-jabatan', '/jabatan/{id}', request_method='PATCH')
     config.add_route('delete-jabatan',
                      '/jabatan/{id}', request_method='DELETE')
+    config.add_route('get-users', '/users', request_method='GET')
+    # config.add_route('get-user', '/users/{id}', request_method='GET')
+    config.add_route('add-user', '/users', request_method='POST')
+    config.add_route('edit-user', '/users/{id}', request_method='PATCH')
+    config.add_route('delete-user', '/users/{id}', request_method='DELETE')

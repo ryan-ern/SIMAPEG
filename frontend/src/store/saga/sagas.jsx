@@ -1,10 +1,11 @@
 import { call, put, takeEvery } from 'redux-saga/effects'
-import { addJabatanFailed, addJabatanSuccess, authInfo, authInfoFailed, authInfoSuccess, deleteJabatanFailed, deleteJabatanSuccess, editJabatanFailed, editJabatanSuccess, editProfilFailed, editProfilSuccess, getJabatan, getJabatanFailed, getJabatanSuccess, loginFailed, loginSuccess, logoutSuccess } from './actions'
-import { ADD_JABATAN, AUTH_INFO, DELETE_JABATAN, EDIT_JABATAN, GET_JABATAN, LOGOUT, POST_EDIT_PROFILE, POST_LOGIN } from './actionTypes'
+import { addJabatanFailed, addJabatanSuccess, addUsersFailed, addUsersSuccess, authInfo, authInfoFailed, authInfoSuccess, deleteJabatanFailed, deleteJabatanSuccess, deleteUsersSuccess, editJabatanFailed, editJabatanSuccess, editProfilFailed, editProfilSuccess, editUsersFailed, editUsersSuccess, getJabatan, getJabatanFailed, getJabatanSuccess, getUsers, getUsersFailed, getUsersSuccess, loginFailed, loginSuccess, logoutSuccess } from './actions'
+import { ADD_JABATAN, ADD_USER, AUTH_INFO, DELETE_JABATAN, DELETE_USER, EDIT_JABATAN, EDIT_USER, GET_JABATAN, GET_USER, LOGOUT, POST_EDIT_PROFILE, POST_LOGIN } from './actionTypes'
 import axios from '../../helper/apiHelper';
-import { URL_DELETE_LOGOUT, URL_DELTE_JABATAN, URL_EDIT_JABATAN, URL_GET_AUTH, URL_GET_JABATAN, URL_POST_JABATAN, URL_POST_LOGIN, URL_POST_PROFIL } from '../../helper/urlHelper';
+import { URL_DELETE_LOGOUT, URL_DELTE_JABATAN, URL_EDIT_JABATAN, URL_GET_AUTH, URL_GET_JABATAN, URL_GET_USERS, URL_POST_JABATAN, URL_POST_LOGIN, URL_POST_PROFIL, URL_USERS_BY_ID } from '../../helper/urlHelper';
 import Cookies from 'js-cookie';
 
+// auth
 export function* loginSaga({ payload: { account, navigate } }) {
     try {
         const response = yield call(axios.post, URL_POST_LOGIN, account)
@@ -46,6 +47,7 @@ export function* logoutSaga({ payload: navigate }) {
     navigate('/')
 }
 
+// profil
 export function* postProfilSaga({ payload: body }) {
     try {
         const response = yield call(axios.patch, URL_POST_PROFIL, body)
@@ -56,6 +58,7 @@ export function* postProfilSaga({ payload: body }) {
     }
 }
 
+// jabatan
 export function* getJabatanSaga() {
     try {
         const response = yield call(axios.get, URL_GET_JABATAN)
@@ -96,6 +99,47 @@ export function* deleteJabatanSaga({ payload: id}) {
     }
 }
 
+// user
+export function* getUserSaga() {
+    try {
+        const response = yield call(axios.get, URL_GET_USERS)
+        yield put(getUsersSuccess(response.data))
+    } catch (err) {
+        yield put(getUsersFailed(err.response.data))
+    }
+}
+
+export function* addUserSaga({ payload: {body, navigate} }) {
+    try {
+        const response = yield call(axios.post, URL_GET_USERS, body)
+        yield put(addUsersSuccess(response.data))
+        navigate('/panel/users')
+        yield put(getUsers())
+    } catch (err) {
+        yield put(addUsersFailed(err.response))
+    }
+}
+
+export function* editUserSaga({ payload: {id, body }}) {
+    try {
+        const response = yield call(axios.patch, URL_USERS_BY_ID.replace(':id', id), body)
+        yield put(editUsersSuccess(response))
+        yield put(getUsers())
+    } catch (err) {
+        yield put(editUsersFailed(err.response.data))
+    }
+}
+
+export function* deleteUserSaga({ payload: id}) {
+    try {
+        const response = yield call(axios.delete, URL_USERS_BY_ID.replace(':id', id))
+        yield put(deleteUsersSuccess(response.data))
+        yield put(getUsers())
+    } catch (err) {
+        // 
+    }
+}
+
 export function* Sagas() {
     yield takeEvery(POST_LOGIN, loginSaga)
     yield takeEvery(AUTH_INFO, authInfoSaga)
@@ -105,5 +149,9 @@ export function* Sagas() {
     yield takeEvery(GET_JABATAN, getJabatanSaga)
     yield takeEvery(EDIT_JABATAN, editJabatanSaga)
     yield takeEvery(DELETE_JABATAN, deleteJabatanSaga)
+    yield takeEvery(ADD_USER, addUserSaga)
+    yield takeEvery(GET_USER, getUserSaga)
+    yield takeEvery(EDIT_USER, editUserSaga)
+    yield takeEvery(DELETE_USER, deleteUserSaga)
 }
 export default Sagas

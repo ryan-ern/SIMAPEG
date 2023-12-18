@@ -31,7 +31,9 @@ class User(Base):
     password = Column(String(255), nullable=False)
     role = Column(Enum('admin', 'user'), nullable=False)
     jabatan_id = Column(Integer, ForeignKey('position.id'), nullable=False)
-    tokens = relationship('Token', back_populates='user')
+    tokens = relationship('Token', back_populates='user',
+                          cascade='all, delete-orphan')
+    jabatan = relationship('Position', backref='users')
 
 
 class Token(Base):
