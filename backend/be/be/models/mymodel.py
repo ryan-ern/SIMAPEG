@@ -30,10 +30,15 @@ class User(Base):
     status = Column(String(255), nullable=False)
     password = Column(String(255), nullable=False)
     role = Column(Enum('admin', 'user'), nullable=False)
+    total_work_id = Column(Integer, ForeignKey('work.id'), nullable=False)
     jabatan_id = Column(Integer, ForeignKey('position.id'), nullable=False)
     tokens = relationship('Token', back_populates='user',
                           cascade='all, delete-orphan')
+    presences = relationship('Presence', backref='user')
+    salarys = relationship('Salary', back_populates='user')
+    leaves = relationship('Leave', back_populates='user')
     jabatan = relationship('Position', backref='users')
+    work = relationship('Work', back_populates='user')
 
 
 class Token(Base):
@@ -60,10 +65,14 @@ class Salary(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     total_presence = Column(Integer, nullable=False)
     total_work_id = Column(Integer, ForeignKey('work.id'), nullable=False)
+    position_id = Column(Integer, ForeignKey('position.id'), nullable=False)
     total_salary = Column(Float, nullable=False)
     month = Column(Integer, nullable=False)
     year = Column(Integer, nullable=False)
     status = Column(Enum('diambil', 'belum diambil'), nullable=False)
+    user = relationship('User', back_populates='salarys')
+    work = relationship('Work', back_populates='salarys')
+    position = relationship('Position', back_populates='salarys')
 
 
 class Leave(Base):
@@ -74,6 +83,7 @@ class Leave(Base):
     akhir = Column(DateTime, nullable=False)
     status = Column(Enum('diproses', 'ditolak', 'diterima'), nullable=False)
     desc = Column(Text)
+    user = relationship('User', back_populates='leaves')
 
 
 class Position(Base):
@@ -81,12 +91,15 @@ class Position(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     salary_in_months = Column(Float, nullable=False)
+    salarys = relationship('Salary', back_populates='position')
 
 
 class Work(Base):
     __tablename__ = 'work'
     id = Column(Integer, primary_key=True)
     total_days = Column(Integer, nullable=False)
+    salarys = relationship('Salary', back_populates='work')
+    user = relationship('User', back_populates='work')
 
 
 class MyModel(Base):

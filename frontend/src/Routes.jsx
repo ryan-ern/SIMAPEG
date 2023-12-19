@@ -9,6 +9,13 @@ import Jabatan from "./pages/admin/jabatan";
 import JabatanAdd from "./pages/admin/addJabatan";
 import Karyawan from "./pages/admin/karyawan";
 import KaryawanAdd from "./pages/admin/addKaryawan";
+import Absensi from "./pages/admin/absensi";
+import Cuti from "./pages/admin/cuti";
+import Gaji from "./pages/admin/gaji";
+import AbsensiUser from "./pages/user/absensiUser";
+import GajiU from "./pages/user/gajiUser";
+import CutiUser from "./pages/user/cutiUser";
+import CutiAdd from "./pages/user/addCuti";
 
 export default function RoutesApp() {
     return (
@@ -26,12 +33,15 @@ export default function RoutesApp() {
                     <Route path="jabatan" element={<Jabatan />} />
                     <Route path="users" element={<Karyawan />} />
                     <Route path="profil" element={<Profil />} />
-                    <Route path="presence" element={<Profil />} />
-                    <Route path="salary" element={<Profil />} />
-                    <Route path="leave" element={<Profil />} />
+                    <Route path="presence" element={<Absensi />} />
+                    <Route path="salary" element={<Gaji />} />
+                    <Route path="salarys" element={<GajiU />} />
+                    <Route path="leave" element={<Cuti />} />
+                    <Route path="leaves" element={<CutiUser />} />
+                    <Route path="add-leaves" element={<CutiAdd />} />
                     <Route path="add-jabatan" element={<JabatanAdd />} />
                     <Route path="add-karyawan" element={<KaryawanAdd />} />
-
+                    <Route path="presences" element={<AbsensiUser />} />
                 </Route>
             </Routes>
         </BrowserRouter>

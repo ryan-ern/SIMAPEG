@@ -22,6 +22,13 @@ def setup_models(dbsession):
     position = models.mymodel.Position(**position_data)
     dbsession.add(position)
 
+    # add total work
+    work_data = {
+        'total_days': 28,
+    }
+    work = models.mymodel.Work(**work_data)
+    dbsession.add(work)
+
     # Add User
     user_data_list = [
         {
@@ -37,6 +44,7 @@ def setup_models(dbsession):
             'password': 'admin',
             'role': 'admin',
             'jabatan_id': 1,
+            'total_work_id': 1,
         },
         {
             'username': 'user',
@@ -51,6 +59,7 @@ def setup_models(dbsession):
             'password': 'user',
             'role': 'user',
             'jabatan_id': 1,
+            'total_work_id': 1,
         }
     ]
 

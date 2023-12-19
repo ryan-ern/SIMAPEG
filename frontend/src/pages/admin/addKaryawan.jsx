@@ -19,6 +19,7 @@ export default function KaryawanAdd() {
         role: "" ,
         jabatan_id: '',
         password: '',
+        total_work_id: 1,
         avatar: 'default.png'
     });
     useEffect(() => {

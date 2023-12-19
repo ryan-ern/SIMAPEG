@@ -1,8 +1,8 @@
-"""fix db
+"""update relasi
 
-Revision ID: 319295bb8554
+Revision ID: a3114b616340
 Revises: 
-Create Date: 2023-12-18 14:57:55.539727
+Create Date: 2024-03-21 06:53:32.626773
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '319295bb8554'
+revision: str = 'a3114b616340'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -51,8 +51,10 @@ def upgrade() -> None:
     sa.Column('status', sa.String(length=255), nullable=False),
     sa.Column('password', sa.String(length=255), nullable=False),
     sa.Column('role', sa.Enum('admin', 'user'), nullable=False),
+    sa.Column('total_work_id', sa.Integer(), nullable=False),
     sa.Column('jabatan_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['jabatan_id'], ['position.id'], name=op.f('fk_users_jabatan_id_position')),
+    sa.ForeignKeyConstraint(['total_work_id'], ['work.id'], name=op.f('fk_users_total_work_id_work')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_users')),
     sa.UniqueConstraint('username', name=op.f('uq_users_username'))
     )
@@ -80,10 +82,12 @@ def upgrade() -> None:
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('total_presence', sa.Integer(), nullable=False),
     sa.Column('total_work_id', sa.Integer(), nullable=False),
+    sa.Column('position_id', sa.Integer(), nullable=False),
     sa.Column('total_salary', sa.Float(), nullable=False),
     sa.Column('month', sa.Integer(), nullable=False),
     sa.Column('year', sa.Integer(), nullable=False),
     sa.Column('status', sa.Enum('diambil', 'belum diambil'), nullable=False),
+    sa.ForeignKeyConstraint(['position_id'], ['position.id'], name=op.f('fk_salary_position_id_position')),
     sa.ForeignKeyConstraint(['total_work_id'], ['work.id'], name=op.f('fk_salary_total_work_id_work')),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_salary_user_id_users')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_salary'))

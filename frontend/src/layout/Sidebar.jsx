@@ -93,24 +93,50 @@ export default function Sidebar({ setOutletMargin }) {
                         <NavText>Edit Profil</NavText>
                     </NavItem>
                 }
-                <NavItem eventKey="panel/presence">
-                    <NavIcon>
-                        <FontAwesomeIcon icon="fa-solid fa-file-circle-check" />
-                    </NavIcon>
-                    <NavText>Absensi</NavText>
-                </NavItem>
-                <NavItem eventKey="panel/salary">
-                    <NavIcon>
-                        <FontAwesomeIcon icon="fa-solid fa-money-bill-wave" />
-                    </NavIcon>
-                    <NavText>Gaji</NavText>
-                </NavItem>
-                <NavItem eventKey="panel/leave">
-                    <NavIcon>
-                        <FontAwesomeIcon icon="fa-solid fa-file-circle-exclamation" />
-                    </NavIcon>
-                    <NavText>Cuti</NavText>
-                </NavItem>
+                {data.role === 'admin' ?
+                    <NavItem eventKey="panel/presence">
+                        <NavIcon>
+                            <FontAwesomeIcon icon="fa-solid fa-file-circle-check" />
+                        </NavIcon>
+                        <NavText>Absensi</NavText>
+                    </NavItem>
+                    :
+                    <NavItem eventKey="panel/presences">
+                        <NavIcon>
+                            <FontAwesomeIcon icon="fa-solid fa-file-circle-check" />
+                        </NavIcon>
+                        <NavText>Absensi</NavText>
+                    </NavItem>
+                }
+                {data.role === 'admin' ?
+                    <NavItem eventKey="panel/salary">
+                        <NavIcon>
+                            <FontAwesomeIcon icon="fa-solid fa-money-bill-wave" />
+                        </NavIcon>
+                        <NavText>Gaji</NavText>
+                    </NavItem>
+                    :
+                    <NavItem eventKey="panel/salarys">
+                        <NavIcon>
+                            <FontAwesomeIcon icon="fa-solid fa-money-bill-wave" />
+                        </NavIcon>
+                        <NavText>Gaji</NavText>
+                    </NavItem>
+                }
+                {data.role === 'admin' ?
+                    <NavItem eventKey="panel/leave">
+                        <NavIcon>
+                            <FontAwesomeIcon icon="fa-solid fa-file-circle-exclamation" />
+                        </NavIcon>
+                        <NavText>Cuti</NavText>
+                    </NavItem>
+                    : <NavItem eventKey="panel/leaves">
+                        <NavIcon>
+                            <FontAwesomeIcon icon="fa-solid fa-file-circle-exclamation" />
+                        </NavIcon>
+                        <NavText>Cuti</NavText>
+                    </NavItem>
+                }
                 {isVisible ? (
                     <div className={`text-center fade ${fadeClass}`} style={{ position: 'absolute', bottom: '8%', width: '100%' }}>
                         <Button variant="danger" className="px-5 py-2" onClick={(e) => { e.preventDefault(); dispatch(logout(navigate)); }}>

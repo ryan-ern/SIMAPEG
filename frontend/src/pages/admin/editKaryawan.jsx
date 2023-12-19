@@ -16,8 +16,8 @@ function EditKaryawan({ data, onEditDone }) {
         status: "" || data.status,
         role: "" || data.role,
         jabatan_id: '' || data.jabatan_id,
+        total_work_id: data.total_work_id,
     });
-
     useEffect(() => {
         dispatch(getJabatan())  
     }, [])
@@ -52,22 +52,22 @@ function EditKaryawan({ data, onEditDone }) {
                                         as="select"
                                         className="form-control w-50 mb-4"
                                         defaultValue={data.jk_pegawai}
-                                        required
+                                        required={data.jk_pegawai === ''}
                                         onChange={(e) => {
                                             setEdit({ ...data, jk_pegawai: e.target.value });
                                         }}
                                     >
-                                        <option value="" disabled selected>
+                                        <option value="">
                                             {data.jk_pegawai}
                                         </option>
                                         <option key="1" value="Laki-laki">Laki-laki</option>
                                         <option key="2" value="Perempuan">Perempuan</option>
                                     </Form.Control>
                                     <Form.Label>Jabatan</Form.Label>
-                                    <Form.Control as="select" className="form-control w-50 mb-4" value={data.jabatan} required onChange={(e) => {
+                                    <Form.Control as="select" className="form-control w-50 mb-4" value={data.jabatan} required={data.jabatan_id === ''} onChange={(e) => {
                                         setEdit({ ...data, jabatan_id: e.target.value });
                                     }}>
-                                        <option value="" disabled>pilih jabatan</option>
+                                        <option value="">pilih jabatan</option>
                                         {jabatan?.jabatan_list?.map((item) => (
                                             <option key={item.id} value={item.id}>
                                                 {item.name}

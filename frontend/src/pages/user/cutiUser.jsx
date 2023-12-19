@@ -1,29 +1,23 @@
 import { useEffect, useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { deleteJabatan, deleteMessage, getJabatan } from "../../store/saga/actions"
+import { deleteMessage, getLeaveUser } from "../../store/saga/actions"
 import { Card, CardBody, Col, Row, Toast, ToastContainer } from "react-bootstrap"
 import {
     useTable, useSortBy, useGlobalFilter, usePagination,
 } from 'react-table';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
-import EditJabatan from "./editJabatan";
 
-export default function Jabatan() {
-    const [dataToEdit, setDataToEdit] = useState(null);
+export default function CutiUser() {
 
-    const handleEditClick = (rowData) => {
-        setDataToEdit(rowData);
-    };
-    const handleEditDone = () => {
-        setDataToEdit(null);
-    };
     const dispatch = useDispatch()
-    const jabatan = useSelector((state) => state.store.jabatan)
+    const cuti = useSelector((state) => state.store.leave)
     const message = useSelector((state) => state.store)
+
     useEffect(() => {
-        dispatch(getJabatan()) 
+        dispatch(getLeaveUser()) 
     }, [])
+    
     useEffect(() => {
         if (message && message.delete?.message || message.add?.message || message.edit?.message) {
             setShow(true);
@@ -39,37 +33,32 @@ export default function Jabatan() {
                 accessor: (_, index) => index + 1
             },
             {
-                Header: 'Posisi',
+                Header: 'Nama',
                 accessor: 'name',
                 Cell: ({value}) => (value)
             },
             {
-                Header: 'Gaji Dalam Sebulan',
-                accessor: 'salary_in_months',
+                Header: 'Cuti Awal',
+                accessor: 'awal',
                 Cell: ({value}) => (value),
             },
             {
-                Header: 'Aksi',
-                id: 'actions',
-                disableSortBy: true,
-                Cell: ({ row }) => (
-                    <>
-                        <div className='text-center'>
-                            <button className="btn btn-primary px-4 my-3" onClick={() => handleEditClick(row.original)}>Edit</button>
-                        </div>
-                        <div className='text-center'>
-                            <button className="btn btn-danger px-3" onClick={() => { dispatch(deleteJabatan(row.original.id));  setShow(true)}}>Hapus</button>
-                        </div>
-                    </>
-                ),
+                Header: 'Cuti Akhir',
+                accessor: 'akhir',
+                Cell: ({value}) => (value),
+            },
+            {
+                Header: 'Status',
+                accessor: 'status',
+                Cell: ({value}) => (value),
             },
         ],
         [],
     )
 
     const data = useMemo(
-        () => (jabatan?.jabatan_list || []),
-        [jabatan],
+        () => (cuti?.leave_list || []),
+        [cuti],
     );
 
     const {
@@ -95,13 +84,11 @@ export default function Jabatan() {
         usePagination,
     )
     const [show, setShow] = useState(false)
-    const navigate = useNavigate()
     const { globalFilter } = state
+    const navigate = useNavigate()
 
     return (
         <Row style={{ marginRight: '5%' }}>
-            {dataToEdit && <EditJabatan data={dataToEdit} onEditDone={handleEditDone}  />}
-
             {show && (
                 <ToastContainer position="top-end" style={{ zIndex: 5, position: 'absolute' }}>
                     <Toast onClose={() => setShow(false)} show={show} delay={3000} style={{ width: '100%', marginTop: '45%', marginLeft: '2%' }} autohide>
@@ -127,12 +114,12 @@ export default function Jabatan() {
                             <Col >
                                 <div className="mb-2 d-inline-block">
                                     <div className="position-relative">
-                                        <input type="text" value={globalFilter || ''} onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Cari data jabatan" className="form-control" style={{ backgroundColor: '#f3f6f9' }} />
+                                        <input type="text" value={globalFilter || ''} onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Cari data cuti" className="form-control" style={{ backgroundColor: '#f3f6f9' }} />
                                     </div>
                                 </div>
                             </Col>
-                            <Col className="d-flex justify-content-end">
-                                <button className="btn btn-primary" onClick={()=> navigate('/panel/add-jabatan')}>Tambah Data</button>
+                            <Col className="text-end">
+                                <button className="btn btn-primary" onClick={()=> navigate('/panel/add-leaves')}>Pengajuan Cuti</button>
                             </Col>
                         </Row>
                         <Row>
@@ -158,7 +145,7 @@ export default function Jabatan() {
                                             <tbody >
                                                 <tr>
                                                     <td colSpan={headerGroups[0].headers.length} className="text-center">
-                                                        {(jabatan) ? 'Tidak ada data.' : null}
+                                                        {(cuti) ? 'Tidak ada data.' : null}
                                                     </td>
                                                 </tr>
                                             </tbody>

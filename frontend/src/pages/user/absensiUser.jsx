@@ -1,29 +1,39 @@
 import { useEffect, useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { deleteJabatan, deleteMessage, getJabatan } from "../../store/saga/actions"
+import { addPresenceIn, addPresenceOut, deleteMessage, getPresenceUser } from "../../store/saga/actions"
 import { Card, CardBody, Col, Row, Toast, ToastContainer } from "react-bootstrap"
 import {
     useTable, useSortBy, useGlobalFilter, usePagination,
 } from 'react-table';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate } from "react-router-dom";
-import EditJabatan from "./editJabatan";
 
-export default function Jabatan() {
-    const [dataToEdit, setDataToEdit] = useState(null);
+export default function AbsensiUser() {
 
-    const handleEditClick = (rowData) => {
-        setDataToEdit(rowData);
-    };
-    const handleEditDone = () => {
-        setDataToEdit(null);
-    };
     const dispatch = useDispatch()
-    const jabatan = useSelector((state) => state.store.jabatan)
+    const absen = useSelector((state) => state.store.presence)
     const message = useSelector((state) => state.store)
+    const time = useSelector((state) => state.store.time)
+    const [dateTime] = useState(new Date());
+    const padZero = (value) => {
+        return value.toString().padStart(2, '0');
+    };
+
+    const getFormattedDateTime = (date) => {
+        const formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
+        const formattedTime = `${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+        return `${formattedDate} ${formattedTime}`;
+    };
+
+    const isWithinTimeRange = () => {
+        const startTime = "5:00:00 AM";
+        const endTime = "7:30:00 AM";
+        return time <= startTime || time >= endTime;
+    };
+
     useEffect(() => {
-        dispatch(getJabatan()) 
+        dispatch(getPresenceUser()) 
     }, [])
+    
     useEffect(() => {
         if (message && message.delete?.message || message.add?.message || message.edit?.message) {
             setShow(true);
@@ -31,7 +41,7 @@ export default function Jabatan() {
                 dispatch(deleteMessage());
             }, 3000);
         }
-    }, [message.delete, message.edit])
+    }, [message.delete, message.edit, message.add?.message ])
     const columns = useMemo(
         () => [
             {
@@ -39,37 +49,27 @@ export default function Jabatan() {
                 accessor: (_, index) => index + 1
             },
             {
-                Header: 'Posisi',
-                accessor: 'name',
-                Cell: ({value}) => (value)
-            },
-            {
-                Header: 'Gaji Dalam Sebulan',
-                accessor: 'salary_in_months',
+                Header: 'Absen Masuk',
+                accessor: 'presence_in',
                 Cell: ({value}) => (value),
             },
             {
-                Header: 'Aksi',
-                id: 'actions',
-                disableSortBy: true,
-                Cell: ({ row }) => (
-                    <>
-                        <div className='text-center'>
-                            <button className="btn btn-primary px-4 my-3" onClick={() => handleEditClick(row.original)}>Edit</button>
-                        </div>
-                        <div className='text-center'>
-                            <button className="btn btn-danger px-3" onClick={() => { dispatch(deleteJabatan(row.original.id));  setShow(true)}}>Hapus</button>
-                        </div>
-                    </>
-                ),
+                Header: 'Absen Keluar',
+                accessor: 'presence_out',
+                Cell: ({value}) => (value),
+            },
+            {
+                Header: 'Status',
+                accessor: 'status',
+                Cell: ({value}) => (value),
             },
         ],
         [],
     )
 
     const data = useMemo(
-        () => (jabatan?.jabatan_list || []),
-        [jabatan],
+        () => (absen?.presence_list || []),
+        [absen],
     );
 
     const {
@@ -95,13 +95,10 @@ export default function Jabatan() {
         usePagination,
     )
     const [show, setShow] = useState(false)
-    const navigate = useNavigate()
     const { globalFilter } = state
 
     return (
         <Row style={{ marginRight: '5%' }}>
-            {dataToEdit && <EditJabatan data={dataToEdit} onEditDone={handleEditDone}  />}
-
             {show && (
                 <ToastContainer position="top-end" style={{ zIndex: 5, position: 'absolute' }}>
                     <Toast onClose={() => setShow(false)} show={show} delay={3000} style={{ width: '100%', marginTop: '45%', marginLeft: '2%' }} autohide>
@@ -127,12 +124,13 @@ export default function Jabatan() {
                             <Col >
                                 <div className="mb-2 d-inline-block">
                                     <div className="position-relative">
-                                        <input type="text" value={globalFilter || ''} onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Cari data jabatan" className="form-control" style={{ backgroundColor: '#f3f6f9' }} />
+                                        <input type="text" value={globalFilter || ''} onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Cari data absen" className="form-control" style={{ backgroundColor: '#f3f6f9' }} />
                                     </div>
                                 </div>
                             </Col>
-                            <Col className="d-flex justify-content-end">
-                                <button className="btn btn-primary" onClick={()=> navigate('/panel/add-jabatan')}>Tambah Data</button>
+                            <Col className="text-end">
+                                <button className="btn mx-5 btn-success" onClick={() => dispatch(addPresenceIn(getFormattedDateTime(dateTime)))} disabled={isWithinTimeRange()}>Absen Masuk</button>
+                                <button className="btn btn-info" onClick={() => dispatch(addPresenceOut(getFormattedDateTime(dateTime)))} disabled={isWithinTimeRange()}>Absen Keluar</button>
                             </Col>
                         </Row>
                         <Row>
@@ -158,7 +156,7 @@ export default function Jabatan() {
                                             <tbody >
                                                 <tr>
                                                     <td colSpan={headerGroups[0].headers.length} className="text-center">
-                                                        {(jabatan) ? 'Tidak ada data.' : null}
+                                                        {(absen) ? 'Tidak ada data.' : null}
                                                     </td>
                                                 </tr>
                                             </tbody>

@@ -38,6 +38,7 @@ export default function Profil() {
         jk_pegawai: data.jk_pegawai || '',
         jabatan: data.jabatan || '',
         jatah_cuti: data.jatah_cuti || '',
+        total_work_id: 1,
     })
 
     const handleFileChange = (e) => {

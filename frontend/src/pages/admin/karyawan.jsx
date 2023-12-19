@@ -25,7 +25,7 @@ export default function Karyawan() {
     useEffect(() => {
         dispatch(getUsers()) 
     }, [])
-    
+
     useEffect(() => {
         if (message && message.delete?.message || message.add?.message || message.edit?.message) {
             setShow(true);
@@ -170,7 +170,7 @@ export default function Karyawan() {
                                             <tbody >
                                                 <tr>
                                                     <td colSpan={headerGroups[0].headers.length} className="text-center">
-                                                        {(karyawan) ? 'Memuat data...' : 'Tidak ada data.'}
+                                                        {(karyawan) ? 'Tidak ada data.' : null}
                                                     </td>
                                                 </tr>
                                             </tbody>
