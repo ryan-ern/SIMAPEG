@@ -1,2 +1,2 @@
 # SIMAPEG
-Sistem Manajemen Kepegawaian | React JS, Pyramid &amp; gRPC
+Sistem Manajemen Kepegawaian | React JS, Pyramid
